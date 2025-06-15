@@ -150,10 +150,15 @@ export const likePost = asyncHandler(async (req, res, next) => {
     return next(new AppError("Post not found", 404));
   }
 
-  const isLiked = post.likes.includes(userId);
+  // Ensure likes is an array
+  if (!Array.isArray(post.likes)) {
+    post.likes = [];
+  }
+
+  const isLiked = post.likes.some(like => like.toString() === userId.toString());
 
   if (isLiked) {
-    post.likes = post.likes.filter((id) => id.toString() !== userId.toString());
+    post.likes = post.likes.filter(id => id.toString() !== userId.toString());
   } else {
     post.likes.push(userId);
 
@@ -183,7 +188,7 @@ export const likePost = asyncHandler(async (req, res, next) => {
     message: isLiked ? "Post unliked" : "Post liked",
     likesCount: post.likes.length,
     isLiked: !isLiked,
-    likes: post.likes
+    likes: post.likes.map(like => like.toString())
   });
 });
 

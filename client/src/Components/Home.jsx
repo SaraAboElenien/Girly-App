@@ -104,11 +104,11 @@ const Home = () => {
       // Update the posts state immediately with the new like count
       setPosts(posts.map(post => {
         if (post._id === postId) {
-          const isLiked = post.likes?.includes(user._id);
           return {
             ...post,
-            likes: response.data.likesCount,
-            isLiked: !isLiked // Toggle the liked state
+            likes: response.data.likes,
+            likesCount: response.data.likesCount,
+            isLiked: response.data.isLiked
           };
         }
         return post;
@@ -125,7 +125,8 @@ const Home = () => {
 
   // Add this function to check if a post is liked by the current user
   const isPostLiked = (post) => {
-    return post.likes?.includes(user._id);
+    if (!post.likes || !Array.isArray(post.likes)) return false;
+    return post.likes.some(like => like === user._id);
   };
 
   return (
