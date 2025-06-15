@@ -3,7 +3,7 @@ import { useAuth } from '../Context/AuthContext';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './Home.css';
-import axios from 'axios';
+import api from '../api/axios';
 
 const Home = () => {
   const { user } = useAuth();
@@ -15,7 +15,7 @@ const Home = () => {
   const fetchPosts = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get('http://localhost:3001/api/v1/auth/post/recent-post', {
+      const response = await api.get('/api/v1/auth/post/recent-post', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPosts(response.data.documents);
@@ -39,7 +39,7 @@ const Home = () => {
     if (newPost.postImage) formData.append('postImage', newPost.postImage);
 
     try {
-      await axios.post('http://localhost:3001/api/v1/auth/post/create-post', formData, {
+      await api.post('/api/v1/auth/post/create-post', formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
@@ -65,7 +65,7 @@ const Home = () => {
     if (newPost.postImage) formData.append('postImage', newPost.postImage);
 
     try {
-      await axios.put(`http://localhost:3001/api/v1/auth/post/${editingPost._id}`, formData, {
+      await api.put(`/api/v1/auth/post/${editingPost._id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
@@ -85,7 +85,7 @@ const Home = () => {
   const handleDeletePost = async (postId) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:3001/api/v1/auth/post/${postId}`, {
+      await api.delete(`/api/v1/auth/post/${postId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success('Post deleted!');
@@ -100,7 +100,7 @@ const Home = () => {
   const handleLikePost = async (postId) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.put(`http://localhost:3001/api/v1/auth/post/${postId}/like`, null, {
+      await api.put(`/api/v1/auth/post/${postId}/like`, null, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success('Post liked/unliked!');
