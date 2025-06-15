@@ -99,34 +99,21 @@ const Home = () => {
 
   const handleLikePost = async (postId) => {
     try {
-      const response = await api.put(`/api/v1/auth/post/${postId}/like`);
-      
-      // Update the posts state immediately with the new like count
-      setPosts(posts.map(post => {
-        if (post._id === postId) {
-          return {
-            ...post,
-            likes: response.data.likes,
-            likesCount: response.data.likesCount,
-            isLiked: response.data.isLiked
-          };
-        }
-        return post;
-      }));
-
-      toast.success(response.data.message);
+      const token = localStorage.getItem('token');
+      await api.put(`/api/v1/auth/post/${postId}/like`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchPosts(); 
     } catch (err) {
-      console.error('Like error:', err);
       const msg = err.response?.data?.message || 'Failed to like/unlike post';
       setError(msg);
       toast.error(msg);
     }
   };
 
-  // Add this function to check if a post is liked by the current user
   const isPostLiked = (post) => {
     if (!post.likes || !Array.isArray(post.likes)) return false;
-    return post.likes.some(like => like === user._id);
+    return post.likes.includes(user._id);
   };
 
   return (
