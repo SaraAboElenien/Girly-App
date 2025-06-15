@@ -104,10 +104,11 @@ const Home = () => {
       // Update the posts state immediately with the new like count
       setPosts(posts.map(post => {
         if (post._id === postId) {
+          const isLiked = post.likes?.includes(user._id);
           return {
             ...post,
             likes: response.data.likesCount,
-            isLiked: !post.isLiked // Toggle the liked state
+            isLiked: !isLiked // Toggle the liked state
           };
         }
         return post;
@@ -122,6 +123,10 @@ const Home = () => {
     }
   };
 
+  // Add this function to check if a post is liked by the current user
+  const isPostLiked = (post) => {
+    return post.likes?.includes(user._id);
+  };
 
   return (
     <div className="home-container">
@@ -326,11 +331,11 @@ const Home = () => {
 
                     <div className="post-footer">
                       <button 
-                        className={`like-button ${post.likes.includes(user?.id) ? 'liked' : ''}`}
+                        className={`like-button ${isPostLiked(post) ? 'liked' : ''}`}
                         onClick={() => handleLikePost(post._id)}
                       >
                         <span className="like-icon">
-                          {post.likes.includes(user?.id) ? '💖' : '🤍'}
+                          {isPostLiked(post) ? '💖' : '🤍'}
                         </span>
                         <span className="like-count">{post.likes.length}</span>
                       </button>

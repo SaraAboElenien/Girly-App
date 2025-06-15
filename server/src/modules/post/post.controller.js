@@ -182,6 +182,8 @@ export const likePost = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     message: isLiked ? "Post unliked" : "Post liked",
     likesCount: post.likes.length,
+    isLiked: !isLiked,
+    likes: post.likes
   });
 });
 
