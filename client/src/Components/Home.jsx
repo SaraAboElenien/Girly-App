@@ -98,14 +98,24 @@ const Home = () => {
   };
 
   const handleLikePost = async (postId) => {
-    const token = localStorage.getItem('token');
     try {
-      await api.put(`/api/v1/auth/post/${postId}/like`, null, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      toast.success('Post liked/unliked!');
-      fetchPosts();
+      const response = await api.put(`/api/v1/auth/post/${postId}/like`);
+      
+      // Update the posts state immediately with the new like count
+      setPosts(posts.map(post => {
+        if (post._id === postId) {
+          return {
+            ...post,
+            likes: response.data.likesCount,
+            isLiked: !post.isLiked // Toggle the liked state
+          };
+        }
+        return post;
+      }));
+
+      toast.success(response.data.message);
     } catch (err) {
+      console.error('Like error:', err);
       const msg = err.response?.data?.message || 'Failed to like/unlike post';
       setError(msg);
       toast.error(msg);
